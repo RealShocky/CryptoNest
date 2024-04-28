@@ -6,7 +6,7 @@ build-backend = "poetry.core.masonry.api"
 name = "cryptonest"
 version = "0.1.0"
 description = "CryptoNest Application"
-authors = ["Your Name <your.email@example.com>"]
+authors = ["Mark Varkevisser <mark.varkevisser@execs.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
@@ -14,6 +14,7 @@ stellar-sdk = "^4.2.0"
 requests = "^2.26.0"
 flask = "^2.0.1"
 gunicorn = "^20.1.0"
+yarl = "1.6.3"  # Specify a specific version of yarl
 
 [tool.poetry.dev-dependencies]
 
