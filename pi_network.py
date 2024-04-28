@@ -1,19 +1,19 @@
+import os
 import requests
 import json
 import stellar_sdk as s_sdk
 
 class PiNetwork:
-    api_key = ""
-    server = ""
-    keypair = ""
+    api_key = os.environ.get("API_KEY")
+    wallet_private_key = os.environ.get("WALLET_PRIVATE_KEY")
+    network = os.environ.get("NETWORK")
     fee = ""
 
-    def initialize(self, api_key, wallet_private_key, network):
+    def initialize(self):
         try:
-            if not self.validate_private_seed_format(wallet_private_key):
+            if not self.validate_private_seed_format(self.wallet_private_key):
                 raise ValueError("Invalid private seed format")
-            self.api_key = api_key
-            self.load_account(wallet_private_key, network)
+            self.load_account()
             self.fee = self.server.fetch_base_fee()
             return True
         except Exception as e:
@@ -29,19 +29,10 @@ class PiNetwork:
         except Exception as e:
             raise Exception("Error fetching balance: " + str(e))
 
-    def create_payment(self, amount, memo=''):
+    def load_account(self):
         try:
-            transaction = self.build_transaction(amount, memo)
-            response = self.submit_transaction(transaction)
-            payment_id = response["id"]
-            return payment_id
-        except Exception as e:
-            raise Exception("Error creating payment: " + str(e))
-
-    def load_account(self, private_seed, network):
-        try:
-            self.keypair = s_sdk.Keypair.from_secret(private_seed)
-            if network == "Pi Network":
+            self.keypair = s_sdk.Keypair.from_secret(self.wallet_private_key)
+            if self.network == "Pi Network":
                 horizon = "https://api.mainnet.minepi.com"
             else:
                 horizon = "https://api.testnet.minepi.com"
