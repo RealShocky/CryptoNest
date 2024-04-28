@@ -20,3 +20,16 @@ gunicorn = "^20.1.0"
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+stellar-sdk = "^4.2.0"
+requests = "^2.26.0"
+flask = "^2.0.1"
+gunicorn = "^20.1.0"
+
+[tool.poetry.extras]
+# Add system dependencies required for building yarl
+aiohttp = [
+    { version = "^3.7", markers = "sys_platform != 'win32' and sys_platform != 'darwin'" }
+]
