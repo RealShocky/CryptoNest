@@ -14,7 +14,6 @@ stellar-sdk = "^4.2.0"
 requests = "^2.26.0"
 flask = "^2.0.1"
 gunicorn = "^20.1.0"
-yarl = "1.6.3"  # Specify a specific version of yarl
 
 [tool.poetry.dev-dependencies]
 
