@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pi Network Payment Interface</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .loading {
+            display: none;
+            margin-top: 10px;
+            color: #4CAF50;
+        }
+
+        .error {
+            display: none;
+            margin-top: 10px;
+            color: #FF5733;
+        }
+
+        #paymentForm input[type="number"],
+        #paymentForm input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0 20px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        #paymentForm button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 14px 20px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        #paymentForm button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Pi Network Payment Interface</h1>
+    
+    <div id="balanceSection" class="section">
+        <h2>Account Balance</h2>
+        <p id="balance">Loading...</p>
+        <p id="balanceLoading" class="loading"><i class="fas fa-spinner fa-spin"></i> Fetching balance...</p>
+        <p id="balanceError" class="error">Error fetching balance</p>
+    </div>
+
+    <div id="paymentSection" class="section">
+        <h2>Create Payment</h2>
+        <form id="paymentForm">
+            <label for="amount">Amount (PiCoins):</label>
+            <input type="number" id="amount" name="amount" required>
+            
+            <label for="memo">Memo:</label>
+            <input type="text" id="memo" name="memo">
+            
+            <button type="submit">Create Payment</button>
+            <p id="paymentLoading" class="loading"><i class="fas fa-spinner fa-spin"></i> Creating payment...</p>
+            <p id="paymentError" class="error"></p>
+            <p id="paymentSuccess"></p>
+        </form>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Fetch account balance
+            fetchBalance();
+
+            // Submit payment form
+            $('#paymentForm').submit(function(event) {
+                event.preventDefault();
+                $('#paymentLoading').show();
+                $('#paymentError').hide();
+                $('#paymentSuccess').hide();
+
+                var amount = $('#amount').val();
+                var memo = $('#memo').val();
+
+                $.ajax({
+                    url: '/create_payment',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ amount: amount, memo: memo }),
+                    success: function(response) {
+                        $('#paymentLoading').hide();
+                        $('#paymentSuccess').text('Payment created successfully. Payment ID: ' + response.payment_id).show();
+                    },
+                    error: function(xhr, status, error) {
+                        $('#paymentLoading').hide();
+                        $('#paymentError').text('Error creating payment: ' + error).show();
+                    }
+                });
+            });
+        });
+
+        // Function to fetch account balance
+        function fetchBalance() {
+            $('#balanceLoading').show();
+            $('#balanceError').hide();
+
+            $.ajax({
+                url: '/get_balance',
+                type: 'GET',
+                success: function(response) {
+                    $('#balance').text(response.balance + ' PiCoins');
+                    $('#balanceLoading').hide();
+                },
+                error: function(xhr, status, error) {
+                    $('#balanceLoading').hide();
+                    $('#balanceError').show();
+                }
+            });
+        }
+    </script>
+</body>
+</html>
